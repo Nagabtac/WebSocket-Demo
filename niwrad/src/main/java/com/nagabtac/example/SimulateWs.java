@@ -20,7 +20,7 @@ public class SimulateWs implements CommandLineRunner {
     public void run(String... args ) throws Exception {
         try(Scanner sc = new Scanner(System.in);){
         System.out.println("WebSocket Simulator***************");
-        System.out.println("Enter a message and press eNTER TO SENT....");
+        System.out.println("Enter a message and press ENTER TO SEND....");
         while(sc.hasNextLine()) {
             String input = sc.nextLine();
             if(input.isBlank()) continue;
