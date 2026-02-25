@@ -4,9 +4,11 @@ import java.util.Scanner;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties.Simple;
+import org.springframework.stereotype.Component;
 
 import com.nagabtac.dto.Message;
 
+@Component
 public class SimulateWs implements CommandLineRunner {
     private final SimpleMessagingTemplate messagingTemplate;
     
