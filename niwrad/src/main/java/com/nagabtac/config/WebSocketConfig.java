@@ -1,23 +1,25 @@
 package com.nagabtac.config;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+@Configuration
+@EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    //websocket configuration
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry){
-        //prefix for topics clients can subscribe to
-        registry.enableSimpleBroker("/topic");
+        registry.enableSimpleBroker("/topic"); // topics clients can subscribe to
+        registry.setApplicationDestinationPrefixes("/app"); // messages sent from clients
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry){
-        //endpoint for clients to connect to
-        registry.addEndpoint("/ws")           //the websoket handshake url
-        .setAllowedOrigins("http://localhost:5173")//client address
-        .withSockJS(); //for older browsers that don't support websockets
-
+        registry.addEndpoint("/ws")                  // WebSocket handshake endpoint
+                .setAllowedOriginPatterns("*")      // allow all origins (dev)
+                .withSockJS();                      // fallback for older browsers
     }
 }

@@ -1,33 +1,43 @@
-import{useState, useEffect} from 'react';
-import SockJs from 'sockJs-client';
-import {Client} from "@stomp/stompjs";
+import { useState, useEffect } from 'react';
+import SockJS from 'sockjs-client';
+import { Client } from "@stomp/stompjs";
+
 const WebSocketClient = () => {
+    const [messages, setMessages] = useState([]);
 
     useEffect(() => {
         const client = new Client({
-            webSocketFactory: () => new SockJs('http://localhost:8080/ws'),
+            webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
             onConnect: () => {
-                client.subscribe("topic/channel1", (message) => {
+                client.subscribe("/topic/messages", (message) => {
                     const body = JSON.parse(message.body);
                     setMessages((prev) => [...prev, body]);
                 });
                 console.log('WebSocket connected');
             },
             onDisconnect: () => {
-                //handle disconnection
                 console.log('WebSocket disconnected');
             }
         });
+
         client.activate();
 
-        return()=>{
+        return () => {
             client.deactivate();
         };
     }, []);
-    return <div>    
-        {messages.length ==0 ? (<p>No messages...</p>) : messages.map(m, i) => (
-            <p key={i}><p>{m.content}</p>
-            </p>
-        )};
-    </div>
-}
+
+    return (
+        <div>    
+            {messages.length === 0 ? (
+                <p>No messages...</p>
+            ) : (
+                messages.map((m, i) => (
+                    <p key={i}>{m.content}</p>
+                ))
+            )}
+        </div>
+    );
+};
+
+export default WebSocketClient;

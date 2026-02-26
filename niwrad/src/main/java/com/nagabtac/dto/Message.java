@@ -2,21 +2,37 @@ package com.nagabtac.dto;
 
 public class Message {
     private String content;
-
     private String sender;
 
+    // No-args constructor
+    public Message() {}
+
+    // Constructor with String sender
     public Message(String content, String sender) {
         this.content = content;
         this.sender = sender;
     }
 
-    public Message(String input, Object sender2) {
-        //TODO Auto-generated constructor stub
-
+    // Constructor with Object sender
+    public Message(String content, Object sender) {
+        this.content = content;
+        this.sender = sender.toString();
     }
 
-    public Message(String input, Object sender2) {
-        //TODO Auto-generated constructor stub
+    // Getters and setters
+    public String getContent() {
+        return content;
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
 }
