@@ -1,11 +1,8 @@
-import { useState } from 'react'
 import './App.css'
-import WebSocketClient from './assets/WebSocketClient'
+import Chat from './Chat'
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (<WebSocketClient/>)
+  return <Chat />
 }
 
 export default App

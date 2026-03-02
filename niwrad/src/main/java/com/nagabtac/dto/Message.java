@@ -3,6 +3,7 @@ package com.nagabtac.dto;
 public class Message {
     private String content;
     private String sender;
+    private String type;
 
     // No-args constructor
     public Message() {}
@@ -34,5 +35,13 @@ public class Message {
 
     public void setSender(String sender) {
         this.sender = sender;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
