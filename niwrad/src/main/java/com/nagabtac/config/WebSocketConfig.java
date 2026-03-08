@@ -1,6 +1,8 @@
 package com.nagabtac.config;
 
+import com.nagabtac.websocket.JwtChannelInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -10,16 +12,28 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    private final JwtChannelInterceptor jwtChannelInterceptor;
+
+    public WebSocketConfig(JwtChannelInterceptor jwtChannelInterceptor) {
+        this.jwtChannelInterceptor = jwtChannelInterceptor;
+    }
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry){
-        registry.enableSimpleBroker("/topic"); // topics clients can subscribe to
-        registry.setApplicationDestinationPrefixes("/app"); // messages sent from clients
+        registry.enableSimpleBroker("/topic", "/queue");
+        registry.setApplicationDestinationPrefixes("/app");
+        registry.setUserDestinationPrefix("/user");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry){
-        registry.addEndpoint("/ws")                  // WebSocket handshake endpoint
-                .setAllowedOriginPatterns("*")      // allow all origins (dev)
-                .withSockJS();                      // fallback for older browsers
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(jwtChannelInterceptor);
     }
 }

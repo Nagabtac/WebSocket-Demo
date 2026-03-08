@@ -3,24 +3,20 @@ package com.nagabtac.dto;
 public class Message {
     private String content;
     private String sender;
+    private String recipient;
     private String type;
+    private long timestamp;
 
-    // No-args constructor
-    public Message() {}
+    public Message() {
+        this.timestamp = System.currentTimeMillis();
+    }
 
-    // Constructor with String sender
     public Message(String content, String sender) {
         this.content = content;
         this.sender = sender;
+        this.timestamp = System.currentTimeMillis();
     }
 
-    // Constructor with Object sender
-    public Message(String content, Object sender) {
-        this.content = content;
-        this.sender = sender.toString();
-    }
-
-    // Getters and setters
     public String getContent() {
         return content;
     }
@@ -37,11 +33,27 @@ public class Message {
         this.sender = sender;
     }
 
+    public String getRecipient() {
+        return recipient;
+    }
+
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
+    }
+
     public String getType() {
         return type;
     }
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }
