@@ -15,9 +15,11 @@ export default function Chat() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [input, setInput] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const clientRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -126,29 +128,82 @@ export default function Chat() {
     setSelectedUser(null);
   };
 
-  const send = () => {
-    if (!input.trim() || !clientRef.current?.connected) return;
+  const send = async () => {
+    if ((!input.trim() && !selectedFile) || !clientRef.current?.connected) return;
+
+    let fileData = null;
+    
+    // Upload file if selected
+    if (selectedFile) {
+      console.log('Uploading file:', selectedFile.name);
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      
+      try {
+        const response = await fetch('http://localhost:8080/api/files/upload', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+        
+        if (response.ok) {
+          fileData = await response.json();
+          console.log('File uploaded successfully:', fileData);
+        } else {
+          console.error('File upload failed:', response.status, response.statusText);
+          const errorText = await response.text();
+          console.error('Error details:', errorText);
+          return;
+        }
+      } catch (error) {
+        console.error('File upload error:', error);
+        return;
+      }
+    }
+
+    const messageData = {
+      content: input || (selectedFile ? `Shared ${selectedFile.type.startsWith('image/') ? 'an image' : 'a file'}` : ''),
+      type: selectedUser ? "PRIVATE" : "CHAT",
+      ...(fileData && {
+        fileUrl: `http://localhost:8080${fileData.url}`,
+        fileName: fileData.originalName,
+        fileType: fileData.type,
+      }),
+    };
+
+    console.log('Sending message:', messageData);
 
     if (selectedUser) {
+      messageData.recipient = selectedUser;
       clientRef.current.publish({
         destination: "/app/private",
-        body: JSON.stringify({
-          recipient: selectedUser,
-          content: input,
-          type: "PRIVATE",
-        }),
+        body: JSON.stringify(messageData),
       });
     } else {
       clientRef.current.publish({
         destination: "/app/chat",
-        body: JSON.stringify({
-          content: input,
-          type: "CHAT",
-        }),
+        body: JSON.stringify(messageData),
       });
     }
 
     setInput("");
+    setSelectedFile(null);
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const removeFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const formatTime = (timestamp) => {
@@ -283,6 +338,31 @@ export default function Chat() {
                 <div className={`message-text ${m.type === "JOIN" ? "join" : ""}`}>
                   {m.content}
                 </div>
+                {m.fileUrl && (
+                  <div className="message-attachment">
+                    {m.fileType?.startsWith('image/') ? (
+                      <img 
+                        src={m.fileUrl} 
+                        alt={m.fileName}
+                        className="message-image"
+                        onClick={() => window.open(m.fileUrl, '_blank')}
+                      />
+                    ) : m.fileType?.startsWith('video/') ? (
+                      <video 
+                        src={m.fileUrl} 
+                        controls
+                        className="message-video"
+                      />
+                    ) : (
+                      <div className="message-file">
+                        <span>📎 {m.fileName}</span>
+                        <a href={m.fileUrl} target="_blank" rel="noopener noreferrer">
+                          Download
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -292,11 +372,38 @@ export default function Chat() {
         <div className="message-input-container">
           <div className="message-input-wrapper">
             <input
+              type="file"
+              ref={fileInputRef}
+              className="attachment-input"
+              onChange={handleFileSelect}
+              accept="image/*,video/*"
+            />
+            <button 
+              className="attachment-btn" 
+              onClick={() => fileInputRef.current?.click()}
+              title="Attach file"
+            >
+              📎
+            </button>
+            <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && send()}
-              placeholder={`Message ${selectedUser ? `@${selectedUser}` : "#public-chat"}`}
+              placeholder={
+                selectedFile 
+                  ? `File: ${selectedFile.name}` 
+                  : `Message ${selectedUser ? `@${selectedUser}` : "#public-chat"}`
+              }
             />
+            {selectedFile && (
+              <button 
+                className="attachment-btn" 
+                onClick={removeFile}
+                title="Remove file"
+              >
+                ✕
+              </button>
+            )}
             <button className="send-btn" onClick={send} disabled={!connected}>
               Send
             </button>

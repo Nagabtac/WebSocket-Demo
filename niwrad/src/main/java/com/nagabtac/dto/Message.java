@@ -6,6 +6,9 @@ public class Message {
     private String recipient;
     private String type;
     private long timestamp;
+    private String fileUrl;
+    private String fileName;
+    private String fileType;
 
     public Message() {
         this.timestamp = System.currentTimeMillis();
@@ -55,5 +58,29 @@ public class Message {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 }

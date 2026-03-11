@@ -345,6 +345,30 @@ body, html, #root {
   background: #40444b;
   border-radius: 8px;
   padding: 12px;
+  align-items: center;
+}
+
+.attachment-btn {
+  background: transparent;
+  border: none;
+  color: #b9bbbe;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 20px;
+}
+
+.attachment-btn:hover {
+  background: #36393f;
+  color: #dcddde;
+}
+
+.attachment-input {
+  display: none;
 }
 
 .message-input-wrapper input {
@@ -373,6 +397,49 @@ body, html, #root {
 
 .send-btn:hover {
   background: #4752c4;
+}
+
+.message-attachment {
+  margin-top: 8px;
+}
+
+.message-image {
+  max-width: 300px;
+  max-height: 200px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.message-image:hover {
+  opacity: 0.8;
+}
+
+.message-video {
+  max-width: 400px;
+  max-height: 300px;
+  border-radius: 8px;
+}
+
+.message-file {
+  background: #2f3136;
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  max-width: 300px;
+}
+
+.message-file a {
+  color: #5865f2;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.message-file a:hover {
+  text-decoration: underline;
 }
 
 .send-btn:disabled {
