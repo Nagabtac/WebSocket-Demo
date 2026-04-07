@@ -26,16 +26,33 @@ public class ChatController {
     @MessageMapping("/chat")
     @SendTo("/topic/messages")
     public Message handleMessage(@Payload Message message, Principal principal) {
+        System.out.println("=== RECEIVED CHAT MESSAGE ===");
+        System.out.println("Sender: " + principal.getName());
+        System.out.println("Content: " + message.getContent());
+        System.out.println("Type: " + message.getType());
+        System.out.println("Has image URL: " + (message.getImageUrl() != null));
+        if (message.getImageUrl() != null) {
+            System.out.println("Image URL: " + message.getImageUrl());
+        }
+        
         message.setSender(principal.getName());
         
-        ChatMessage chatMessage = new ChatMessage(
-            message.getSender(),
-            null,
-            message.getContent(),
-            message.getType()
-        );
-        messageRepository.save(chatMessage);
+        try {
+            ChatMessage chatMessage = new ChatMessage(
+                message.getSender(),
+                null,
+                message.getContent(),
+                message.getType(),
+                message.getImageUrl()
+            );
+            messageRepository.save(chatMessage);
+            System.out.println("Message saved to database successfully");
+        } catch (Exception e) {
+            System.err.println("Error saving message to database: " + e.getMessage());
+            e.printStackTrace();
+        }
         
+        System.out.println("Returning message to broadcast");
         return message;
     }
 
@@ -55,7 +72,8 @@ public class ChatController {
             message.getSender(),
             message.getRecipient(),
             message.getContent(),
-            "PRIVATE"
+            "PRIVATE",
+            message.getImageUrl()
         );
         messageRepository.save(chatMessage);
         

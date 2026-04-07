@@ -5,6 +5,7 @@ public class Message {
     private String sender;
     private String recipient;
     private String type;
+    private String imageUrl;
     private long timestamp;
 
     public Message() {
@@ -47,6 +48,14 @@ public class Message {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public long getTimestamp() {

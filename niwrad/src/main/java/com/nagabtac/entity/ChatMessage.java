@@ -14,6 +14,10 @@ public class ChatMessage {
     private String recipient;
     private String content;
     private String type;
+    
+    @Column(columnDefinition = "TEXT")
+    private String imageUrl;
+    
     private LocalDateTime timestamp;
 
     public ChatMessage() {
@@ -25,6 +29,15 @@ public class ChatMessage {
         this.recipient = recipient;
         this.content = content;
         this.type = type;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    public ChatMessage(String sender, String recipient, String content, String type, String imageUrl) {
+        this.sender = sender;
+        this.recipient = recipient;
+        this.content = content;
+        this.type = type;
+        this.imageUrl = imageUrl;
         this.timestamp = LocalDateTime.now();
     }
 
@@ -66,6 +79,14 @@ public class ChatMessage {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public LocalDateTime getTimestamp() {
